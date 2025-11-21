@@ -1,0 +1,75 @@
+CREATE TABLE IF NOT EXISTS users (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  full_name VARCHAR(120) NOT NULL,
+  email VARCHAR(120) NOT NULL UNIQUE,
+  password_hash VARCHAR(255) NOT NULL,
+  role ENUM('STUDENT', 'HOD', 'ACCOUNTS') DEFAULT 'STUDENT',
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS claims (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  student_id INT NOT NULL,
+  amount DECIMAL(10,2) NOT NULL,
+  description TEXT NOT NULL,
+  purpose VARCHAR(255) NOT NULL,
+  status ENUM(
+    'SUBMITTED',
+    'UNDER_REVIEW',
+    'MORE_INFO',
+    'ACTION_NEEDED',
+    'APPROVED',
+    'REJECTED',
+    'WITHDRAWN',
+    'COMPLETED'
+  ) DEFAULT 'SUBMITTED',
+  current_stage ENUM('STUDENT', 'HOD', 'ACCOUNTS') DEFAULT 'HOD',
+  decision_comment TEXT NULL,
+  transaction_ref VARCHAR(120) NULL,
+  last_action_by INT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  CONSTRAINT fk_claim_student FOREIGN KEY (student_id) REFERENCES users(id)
+    ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS claim_documents (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  claim_id INT NOT NULL,
+  original_name VARCHAR(255) NOT NULL,
+  stored_name VARCHAR(255) NOT NULL,
+  mime_type VARCHAR(120) NOT NULL,
+  size INT NOT NULL,
+  uploaded_by INT NOT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  CONSTRAINT fk_documents_claim FOREIGN KEY (claim_id) REFERENCES claims(id)
+    ON DELETE CASCADE,
+  CONSTRAINT fk_documents_user FOREIGN KEY (uploaded_by) REFERENCES users(id)
+    ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS claim_history (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  claim_id INT NOT NULL,
+  status VARCHAR(40) NOT NULL,
+  actor_id INT NOT NULL,
+  actor_role ENUM('STUDENT', 'HOD', 'ACCOUNTS') NOT NULL,
+  notes TEXT,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  CONSTRAINT fk_history_claim FOREIGN KEY (claim_id) REFERENCES claims(id)
+    ON DELETE CASCADE,
+  INDEX idx_history_claim (claim_id)
+);
+
+CREATE TABLE IF NOT EXISTS notifications (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  user_id INT NOT NULL,
+  title VARCHAR(120) NOT NULL,
+  message TEXT NOT NULL,
+  status VARCHAR(40) DEFAULT 'INFO',
+  metadata JSON NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  CONSTRAINT fk_notifications_user FOREIGN KEY (user_id) REFERENCES users(id)
+    ON DELETE CASCADE
+);
+

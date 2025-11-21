@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>EduPay Portal | Admin Verification</title>
+    <link rel="stylesheet" href="/css/styles.css" />
+  </head>
+  <body>
+    <div class="layout">
+      <header>
+        <h1>EduPay Portal</h1>
+        <nav>
+          <a href="/pages/admin.html" class="active">Review Claims</a>
+          <button id="logoutBtn" class="btn-secondary" type="button">Logout</button>
+        </nav>
+      </header>
+      <main>
+        <section class="card">
+          <h2>Admin verification panel</h2>
+          <p>Approve, request more information, or reject claims. Completed refunds trigger notifications automatically.</p>
+          <div class="notification-banner"></div>
+          <div id="adminClaims"></div>
+        </section>
+      </main>
+    </div>
+    <script src="/js/api.js"></script>
+    <script src="/js/admin.js"></script>
+  </body>
+</html>
+

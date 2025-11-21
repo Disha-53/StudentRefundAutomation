@@ -1,0 +1,42 @@
+{
+  "name": "studentrefundautomation",
+  "version": "1.0.0",
+  "description": "This is a website ""EduPay Protal"" designed to replace manual, paper-based refund processes with a streamlined digital workflow. This system provides a user-friendly interface where students can electronically submit refund requests, attach supporting documents, and track the status of their requests in real-time.",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "nodemon src/server.js",
+    "lint": "echo ""Add linting tool"""
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Disha-53/StudentRefundAutomation.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Disha-53/StudentRefundAutomation/issues"
+  },
+  "homepage": "https://github.com/Disha-53/StudentRefundAutomation#readme",
+  "dependencies": {
+    "bcryptjs": "^3.0.3",
+    "cookie-parser": "^1.4.7",
+    "cors": "^2.8.5",
+    "dotenv": "^17.2.3",
+    "express": "^5.1.0",
+    "express-validator": "^7.3.1",
+    "helmet": "^8.1.0",
+    "jsonwebtoken": "^9.0.2",
+    "morgan": "^1.10.1",
+    "multer": "^2.0.2",
+    "mysql2": "^3.15.3",
+    "nodemailer": "^7.0.10",
+    "nodemailer-stub-transport": "^1.1.0",
+    "uuid": "^13.0.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.11"
+  }
+}
+
