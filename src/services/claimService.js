@@ -29,8 +29,8 @@ function mapActionToStatus({ action, actorRole }) {
   }
 }
 
-async function submitClaim({ studentId, amount, description, purpose, files = [] }) {
-  const claimId = await createClaim({ studentId, amount, description, purpose });
+async function submitClaim({ studentId, amount, description, purpose, accountNumber = null, ifscCode = null, phoneNumber = null, files = [] }) {
+  const claimId = await createClaim({ studentId, amount, description, purpose, accountNumber, ifscCode, phoneNumber });
   await addHistory({
     claimId,
     status: CLAIM_STATUS.SUBMITTED,

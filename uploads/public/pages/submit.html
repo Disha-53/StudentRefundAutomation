@@ -32,7 +32,18 @@
                 <option value="Hostel">Hostel</option>
                 <option value="Library">Library</option>
                 <option value="Security Deposit">Security Deposit</option>
+                <option value="Other">Other</option>
               </select>
+              <input type="text" name="purpose_other" id="purposeOther" placeholder="Specify other purpose" style="display:none; margin-top:8px;" />
+            </label>
+            <label>Account number (required)
+              <input type="text" name="account_number" placeholder="1234567890" required />
+            </label>
+            <label>Phone number (required)
+              <input type="text" name="phone_number" placeholder="9876543210" required />
+            </label>
+            <label>IFSC code (required)
+              <input type="text" name="ifsc_code" placeholder="ABCD0123456" required />
             </label>
             <label>Describe your claim
               <textarea name="description" rows="4" required placeholder="Add context for HoD & Accounts"></textarea>
@@ -47,6 +58,7 @@
       </main>
     </div>
     <script src="/js/api.js"></script>
+    <script src="/js/ui.js"></script>
     <script src="/js/student.js"></script>
   </body>
 </html>

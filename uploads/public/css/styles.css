@@ -123,6 +123,29 @@ button:hover {
   margin-bottom: 1rem;
 }
 
+/* Make status cards more responsive: two-column grid on wide screens */
+@media (min-width: 900px) {
+  .status-card {
+    display: grid;
+    grid-template-columns: 1fr 240px;
+    gap: 1rem;
+    align-items: start;
+  }
+  .status-card header {
+    grid-column: 1 / -1;
+  }
+}
+
+/* Modal simple styles for document viewer */
+#docsModal {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+#docsModal > div {
+  box-shadow: 0 20px 40px rgba(2,6,23,0.2);
+}
+
 .status-badge {
   display: inline-flex;
   align-items: center;
@@ -202,4 +225,58 @@ button:hover {
     padding: 1.25rem;
   }
 }
+
+/* Mobile nav toggle */
+.nav-toggle {
+  display: none;
+  background: transparent;
+  border: none;
+  font-size: 1.4rem;
+  cursor: pointer;
+}
+
+header.nav-open nav {
+  display: block !important;
+}
+
+header nav {
+  display: flex;
+  align-items: center;
+}
+
+@media (max-width: 768px) {
+  .nav-toggle {
+    display: inline-block;
+    position: absolute;
+    left: 1rem;
+    top: 1rem;
+  }
+
+  header nav {
+    display: none;
+    width: 100%;
+    margin-top: 3rem;
+    flex-direction: column;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem 1rem 1rem;
+  }
+
+  header.nav-open nav {
+    display: flex;
+  }
+
+  .search-input {
+    width: 100%;
+    margin-bottom: 0.75rem;
+  }
+}
+
+.search-input {
+  padding: 0.5rem 0.75rem;
+  border-radius: 0.6rem;
+  border: 1px solid #e2e8f0;
+  width: 300px;
+  margin-bottom: 1rem;
+}
+
 

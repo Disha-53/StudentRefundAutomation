@@ -19,7 +19,7 @@ const PORT = process.env.PORT || 4000;
 app.use(helmet());
 app.use(
   cors({
-    origin: process.env.CLIENT_ORIGIN?.split(',') || ['http://localhost:4000'],
+    origin: process.env.CLIENT_ORIGIN?.split(',') || 'http://localhost:4000',
     credentials: true,
   }),
 );
@@ -28,7 +28,14 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(morgan('dev'));
 
+// Serve uploaded static assets under /uploads (keeps existing behavior)
 app.use('/uploads', express.static(path.join(__dirname, '..', 'uploads')));
+
+// Serve the bundled frontend from `uploads/public` as the site root so
+// paths like `/pages/admin.html`, `/css/styles.css`, `/js/admin.js` resolve.
+// Fall back to the repo `public` folder if present.
+const uploadsPublic = path.join(__dirname, '..', 'uploads', 'public');
+app.use(express.static(uploadsPublic));
 app.use(express.static(path.join(__dirname, '..', 'public')));
 
 app.get('/health', async (_req, res, next) => {
@@ -47,16 +54,22 @@ app.use('/api/notifications', notificationRoutes);
 app.use(notFoundHandler);
 app.use(errorHandler);
 
-healthCheck()
-  .then(() => {
-    app.listen(PORT, () => {
-      // eslint-disable-next-line no-console
-      console.log(`EduPay Portal server listening on port ${PORT}`);
-    });
-  })
-  .catch((error) => {
+// Try to connect to the database but don't crash the whole server if unavailable.
+(async () => {
+  try {
+    await healthCheck();
+    // eslint-disable-next-line no-console
+    console.log('Database connection OK');
+  } catch (error) {
     // eslint-disable-next-line no-console
     console.error('Database connection failed:', error.message);
-    process.exit(1);
+    // Continue starting the server so non-DB endpoints (or health routes) can still respond.
+    // This helps during local development when the DB is temporarily down.
+  }
+
+  app.listen(PORT, () => {
+    // eslint-disable-next-line no-console
+    console.log(`EduPay Portal server listening on port ${PORT}`);
   });
+})();
 

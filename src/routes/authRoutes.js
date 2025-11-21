@@ -10,6 +10,10 @@ router.post(
     body('fullName').isLength({ min: 3 }).withMessage('Full name is required'),
     body('email').isEmail().withMessage('Valid email required'),
     body('password').isLength({ min: 6 }).withMessage('Password must be 6 characters or more'),
+    body('role')
+      .optional()
+      .isIn(['STUDENT', 'HOD', 'ACCOUNTS'])
+      .withMessage('Role must be STUDENT, HOD or ACCOUNTS'),
   ],
   register,
 );

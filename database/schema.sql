@@ -13,6 +13,8 @@ CREATE TABLE IF NOT EXISTS claims (
   amount DECIMAL(10,2) NOT NULL,
   description TEXT NOT NULL,
   purpose VARCHAR(255) NOT NULL,
+  account_number VARCHAR(64) NULL,
+  ifsc_code VARCHAR(32) NULL,
   status ENUM(
     'SUBMITTED',
     'UNDER_REVIEW',

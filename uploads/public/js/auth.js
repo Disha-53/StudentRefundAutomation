@@ -14,8 +14,11 @@ document.addEventListener('DOMContentLoaded', () => {
         });
         saveSession(data);
         showBanner('Login successful! Redirecting...');
+        const role = data?.user?.role || 'STUDENT';
         setTimeout(() => {
-          window.location.href = '/pages/submit.html';
+          if (role === 'HOD') window.location.href = '/pages/hod.html';
+          else if (role === 'ACCOUNTS') window.location.href = '/pages/accounts.html';
+          else window.location.href = '/pages/submit.html';
         }, 800);
       } catch (error) {
         showBanner(error.message, 'danger');
@@ -34,9 +37,12 @@ document.addEventListener('DOMContentLoaded', () => {
           body: Object.fromEntries(formData),
         });
         saveSession(data);
-        showBanner('Registration complete! Redirecting to claim submission.');
+        showBanner('Registration complete! Redirecting...');
+        const role = data?.user?.role || 'STUDENT';
         setTimeout(() => {
-          window.location.href = '/pages/submit.html';
+          if (role === 'HOD') window.location.href = '/pages/hod.html';
+          else if (role === 'ACCOUNTS') window.location.href = '/pages/accounts.html';
+          else window.location.href = '/pages/submit.html';
         }, 1000);
       } catch (error) {
         showBanner(error.message, 'danger');

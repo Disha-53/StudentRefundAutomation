@@ -52,7 +52,33 @@ async function loadClaims() {
 async function submitClaimForm(event) {
   event.preventDefault();
   const form = event.target;
+  // client-side validation for account number and IFSC
+  const accountNumber = form.querySelector('input[name="account_number"]')?.value?.trim();
+  const ifscCode = form.querySelector('input[name="ifsc_code"]')?.value?.trim();
+  const phoneNumber = form.querySelector('input[name="phone_number"]')?.value?.trim();
+  const accValid = /^[0-9]{9,18}$/.test(accountNumber);
+  const ifscValid = /^[A-Za-z]{4}0[A-Za-z0-9]{6}$/.test(ifscCode);
+  const phoneValid = /^[0-9]{7,15}$/.test(phoneNumber);
+  if (!accValid || !ifscValid) {
+    showBanner(
+      `Validation error: ${!accValid ? 'Account number must be 9-18 digits.' : ''} ${!ifscValid ? 'IFSC must be 11 chars (4 letters, 0, 6 alnum).' : ''} ${!phoneValid ? 'Phone must be 7-15 digits.' : ''}`,
+      'danger',
+    );
+    return;
+  }
+
   const formData = new FormData(form);
+  // If user selected 'Other' for purpose, replace the purpose value with the custom text
+  const purposeSelect = form.querySelector('select[name="purpose"]');
+  const purposeOther = form.querySelector('input[name="purpose_other"]');
+  if (purposeSelect && purposeSelect.value === 'Other') {
+    const otherVal = purposeOther?.value?.trim();
+    if (!otherVal) {
+      showBanner('Please specify the other purpose', 'danger');
+      return;
+    }
+    formData.set('purpose', otherVal);
+  }
   const files = document.querySelector('#documents');
   if (files?.files) {
     [...files.files].forEach((file) => formData.append('documents', file));
@@ -100,8 +126,37 @@ async function uploadAdditionalDocs(claimId, files) {
 
 document.addEventListener('DOMContentLoaded', () => {
   const claimForm = document.querySelector('#claimForm');
+    const purposeSelect = document.querySelector('select[name="purpose"]');
+    const purposeOtherInput = document.querySelector('#purposeOther');
+    if (purposeSelect && purposeOtherInput) {
+      purposeSelect.addEventListener('change', (e) => {
+        if (e.target.value === 'Other') {
+          purposeOtherInput.style.display = 'block';
+          purposeOtherInput.required = true;
+        } else {
+          purposeOtherInput.style.display = 'none';
+          purposeOtherInput.required = false;
+        }
+      });
+    }
   if (claimForm) {
-    claimForm.addEventListener('submit', submitClaimForm);
+    // Prevent non-students from submitting the claim form
+    try {
+      const user = getCurrentUser();
+      if (!user || user.role !== 'STUDENT') {
+        const banner = document.querySelector('.notification-banner');
+        if (banner) {
+          banner.textContent = 'Only students can submit claims. Please login with a student account.';
+          banner.dataset.variant = 'warning';
+          banner.classList.add('show');
+        }
+        claimForm.querySelectorAll('input, textarea, select, button').forEach((el) => (el.disabled = true));
+      } else {
+          claimForm.addEventListener('submit', submitClaimForm);
+      }
+    } catch (e) {
+      claimForm.addEventListener('submit', submitClaimForm);
+    }
   }
 
   loadClaims();
@@ -118,4 +173,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 });
+
+  // adjust FormData for 'Other' purpose before creating the FormData in submit handler
+  // (we use FormData.set in submitClaimForm so nothing else needed here)
 

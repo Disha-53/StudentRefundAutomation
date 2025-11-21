@@ -8,8 +8,11 @@ async function register(req, res, next) {
   }
 
   try {
-    const { fullName, email, password } = req.body;
-    const result = await registerUser({ fullName, email, password, role: 'STUDENT' });
+    const { fullName, email, password, role } = req.body;
+    // Allow role from body but default to STUDENT. In a real app you would restrict who can create HOD/ACCOUNTS.
+    const allowedRoles = ['STUDENT', 'HOD', 'ACCOUNTS'];
+    const userRole = allowedRoles.includes(role) ? role : 'STUDENT';
+    const result = await registerUser({ fullName, email, password, role: userRole });
     return res.status(201).json(result);
   } catch (error) {
     return next(error);
@@ -25,6 +28,13 @@ async function login(req, res, next) {
   try {
     const { email, password } = req.body;
     const result = await loginUser({ email, password });
+    // Set JWT as httpOnly cookie for browser clients
+    res.cookie('token', result.token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+      maxAge: 12 * 60 * 60 * 1000, // 12 hours
+    });
     return res.json(result);
   } catch (error) {
     return next(error);

@@ -1,12 +1,28 @@
 const { pool } = require('../config/db');
 
-async function createClaim({ studentId, amount, description, purpose }) {
-  const sql = `
-    INSERT INTO claims (student_id, amount, description, purpose, status, current_stage)
-    VALUES (:studentId, :amount, :description, :purpose, 'SUBMITTED', 'HOD')
+async function createClaim({ studentId, amount, description, purpose, accountNumber = null, ifscCode = null, phoneNumber = null }) {
+  const sqlWithIfsc = `
+    INSERT INTO claims (student_id, amount, description, purpose, account_number, ifsc_code, phone_number, status, current_stage)
+    VALUES (:studentId, :amount, :description, :purpose, :accountNumber, :ifscCode, :phoneNumber, 'SUBMITTED', 'HOD')
   `;
-  const [result] = await pool.execute(sql, { studentId, amount, description, purpose });
-  return result.insertId;
+
+  try {
+    const [result] = await pool.execute(sqlWithIfsc, { studentId, amount, description, purpose, accountNumber, ifscCode, phoneNumber });
+    return result.insertId;
+  } catch (err) {
+    // Handle older DB schemas that don't yet have account_number/ifsc_code columns.
+    // MySQL returns ER_BAD_FIELD_ERROR when a column in the INSERT does not exist.
+    if (err && err.code === 'ER_BAD_FIELD_ERROR' && /account_number|ifsc_code|phone_number/i.test(err.sqlMessage || '')) {
+      const sqlFallback = `
+        INSERT INTO claims (student_id, amount, description, purpose, status, current_stage)
+        VALUES (:studentId, :amount, :description, :purpose, 'SUBMITTED', 'HOD')
+      `;
+      const [fallbackResult] = await pool.execute(sqlFallback, { studentId, amount, description, purpose });
+      return fallbackResult.insertId;
+    }
+    // Re-throw unexpected errors
+    throw err;
+  }
 }
 
 async function addDocument({ claimId, originalName, storedName, mimeType, size, uploadedBy }) {

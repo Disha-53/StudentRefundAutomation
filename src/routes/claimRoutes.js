@@ -37,6 +37,16 @@ router.post(
     body('amount').isFloat({ gt: 0 }).withMessage('Amount must be greater than 0'),
     body('description').isLength({ min: 10 }).withMessage('Description is required'),
     body('purpose').notEmpty().withMessage('Purpose is required'),
+    body('account_number')
+      .matches(/^[0-9]{9,18}$/)
+      .withMessage('Account number is required and must be 9 to 18 digits'),
+    body('ifsc_code')
+      .matches(/^[A-Za-z]{4}0[A-Za-z0-9]{6}$/)
+      .withMessage('IFSC code is required and must be a valid 11-character code (e.g. ABCD0E12345)'),
+    body('phone_number')
+      .optional()
+      .matches(/^[0-9]{7,15}$/)
+      .withMessage('Phone number must be 7 to 15 digits'),
   ],
   createClaim,
 );

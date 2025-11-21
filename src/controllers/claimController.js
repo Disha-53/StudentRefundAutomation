@@ -16,12 +16,15 @@ async function createClaim(req, res, next) {
   }
 
   try {
-    const { amount, description, purpose } = req.body;
+    const { amount, description, purpose, account_number: accountNumber, ifsc_code: ifscCode, phone_number: phoneNumber } = req.body;
     const claim = await submitClaim({
       studentId: req.user.id,
       amount,
       description,
       purpose,
+      accountNumber,
+      ifscCode,
+      phoneNumber,
       files: req.files || [],
     });
     return res.status(201).json(claim);
