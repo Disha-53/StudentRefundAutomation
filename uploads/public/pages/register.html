@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>EduPay Portal | Register</title>
+    <link rel="stylesheet" href="/css/styles.css" />
+  </head>
+  <body>
+    <div class="layout">
+      <header>
+        <h1>EduPay Portal</h1>
+        <nav>
+          <a href="/index.html">Login</a>
+          <a href="/pages/register.html" class="active">Register</a>
+        </nav>
+      </header>
+      <main>
+        <section class="card">
+          <h2>Create your student profile</h2>
+          <p>Register once and submit refund claims anytime.</p>
+          <div class="notification-banner"></div>
+          <form id="registerForm">
+            <label>Full name
+              <input type="text" name="fullName" required />
+            </label>
+            <label>Institution email
+              <input type="email" name="email" required />
+            </label>
+            <label>Password
+              <input type="password" name="password" minlength="6" required />
+            </label>
+            <button type="submit">Create account</button>
+            <p>
+              Already registered?
+              <a href="/index.html">Sign in</a>
+            </p>
+          </form>
+        </section>
+      </main>
+    </div>
+    <script src="/js/api.js"></script>
+    <script src="/js/auth.js"></script>
+  </body>
+</html>
+
